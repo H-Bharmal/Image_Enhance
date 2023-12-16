@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Enhancer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Image Enhancer </h1>
+
+    <form id="upload-form" enctype="multipart/form-data" method="post">
+        <input type="file" id="image-input" name="image" accept="image/*" required>
+        <select id="processing-choice" name="choice" required>
+            <option value="sketch">Sketch</option>
+            <option value="cartoonify">Cartoonify</option>
+            <option value="colorize">Colorize</option>
+        </select>
+        <button type="submit">Process Image</button>
+    </form>
+    <br>
+    <div id="result-container"></div>
+
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>
