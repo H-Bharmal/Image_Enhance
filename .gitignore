@@ -1,3 +1,4 @@
-./processing/colorization_release_v2.caffemodel
-processing/__pycache__
 processing/colorization_release_v2.caffemodel
+__pycache__/
+/processing/__pycache__/
+# processing/__pycache__/cartoonify.cpython-312.pyc
