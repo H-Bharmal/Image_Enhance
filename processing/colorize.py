@@ -15,49 +15,23 @@ def colorize(image):
         nparr = np.frombuffer(image.read(), np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    # Get the absolute path of the current script
-    # script_dir = os.path.dirname(os.path.realpath(__file__))
-
-    # Construct relative paths to your external files
-    # model_path = os.path.join(script_dir, 'colorization_release_v2.caffemodel')
-    # model_path = 'D:\Learn\College Projects\Colorize_Final\processing\colorization_release_v2.caffemodel'
-
     script_dir = os.path.dirname(__file__)  # Assuming this script is in the same directory as the model files
-
     model_path = os.path.join(script_dir, 'colorization_release_v2.caffemodel')
     protxt_path = os.path.join(script_dir, 'colorization_deploy_v2.prototxt')
     points_path = os.path.join(script_dir, 'pts_in_hull.npy')
-    image_path = os.path.join(script_dir, 'static', 'temp_image.png')
-
-    # Download links
-    download_Link_Model = "https://drive.google.com/uc?export=download&id=1AoPskjkS7HdNk7tXmK6b7KBr1Yh2yTEf&confirm=t&uuid=f556b515-3a43-4e22-8f61-d6ac50bc31d7"
-    download_Link_Points = "https://drive.google.com/u/0/uc?id=1uNXx3MfFj-NBhm2QAk_A5IvnLC0i41wx&export=download"
-
-    def download_file_from_url(url, destination):
-        response = requests.get(url, stream=True)
-        with open(destination, 'wb') as file:
-            for chunk in response.iter_content(chunk_size=1024):
-                if chunk:
-                    file.write(chunk)
-
-    def load_numpy_array_from_url(url):
-        response = requests.get(url)
-        npy_data = BytesIO(response.content)
-        array_data = np.load(npy_data)
-        return array_data
-
-    # Download the model
-    download_file_from_url(download_Link_Model, model_path)
-
-    # Load the model and points
-    pts = load_numpy_array_from_url(download_Link_Points)
-    net = cv2.dnn.readNetFromCaffe(protxt_path, model_path)
-    # Load the model and points
-    # net = load_model_from_url(protxt_path, download_Link_Model)
-    # # net = load_model_from_url(download_Link_Model)
+    
+# UNCOMMENT THE BELOW LINES AND COMMENT ABOVE LINES TO GET THE MODEL FILES WITHOUT STORING IN LOCAL SYSTEM
+# UNCOMMENT FROM HERE
+    # # Download the model, Load the model and points
+    # download_file_from_url(download_Link_Model, model_path)
     # pts = load_numpy_array_from_url(download_Link_Points)
-
     # net = cv2.dnn.readNetFromCaffe(protxt_path, model_path)
+# -- UNCOMMENT SECTION OVER
+
+# TO ACCESS MODELS FROM LOCAL SYSTEM DIRECTLY
+    net = cv2.dnn.readNetFromCaffe(protxt_path, model_path)
+    pts = np.load(points_path)
+    
     # ab channel - 1x1 convolutions and add them to the model
     class8 = net.getLayerId("class8_ab")
     conv8 = net.getLayerId('conv8_313_rh')
@@ -91,3 +65,27 @@ def colorize(image):
     colorized_base64 = base64.b64encode(colorized_encoded).decode('utf-8')
 
     return colorized_base64
+
+# --------- SECTION TO ACCESS MODELS AND NECESSARY FILES FROM INTERNET 
+# Download links 
+download_Link_Model = "https://drive.google.com/uc?export=download&id=1AoPskjkS7HdNk7tXmK6b7KBr1Yh2yTEf&confirm=t&uuid=f556b515-3a43-4e22-8f61-d6ac50bc31d7"
+download_Link_Points = "https://drive.google.com/u/0/uc?id=1uNXx3MfFj-NBhm2QAk_A5IvnLC0i41wx&export=download"
+download_Link_Prototxt = "https://drive.google.com/u/0/uc?id=1180isSpCIy5eH1ZFRRAJTqynGdpBOSmr&export=download"
+
+def download_file_from_url(url, destination):
+    response = requests.get(url, stream=True)
+    with open(destination, 'wb') as file:
+        for chunk in response.iter_content(chunk_size=1024):
+            if chunk:
+                file.write(chunk)
+
+def load_numpy_array_from_url(url):
+    response = requests.get(url)
+    npy_data = BytesIO(response.content)
+    array_data = np.load(npy_data)
+    return array_data
+
+def download_prototxt_file(prototxt_url, destination):
+    response = requests.get(prototxt_url)
+    with open(destination, 'wb') as file:
+        file.write(response.content)
